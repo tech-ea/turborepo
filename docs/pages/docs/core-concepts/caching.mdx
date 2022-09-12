@@ -130,7 +130,7 @@ You can also disable caching on specific tasks by setting the [`pipeline.<task>.
 }
 ```
 
-## Alter Caching Based on Environment Variables and Files
+## Alter Caching Based on File Changes
 
 For some tasks, you may not want a cache miss if an irrelevant file has changed. For instance, updating `README.md`
 might not need to trigger a cache miss for the `test` task. You can use `inputs` to restrict the set
@@ -155,13 +155,33 @@ determining a cache hit on the `test` task:
   Note: `turbo.json` is *always* considered an input. If you modify `turbo.json`, all caches are invalidated.
 </Callout>
 
+### Alter Caching Globally
+
+If you want _all_ tasks to depend on the certain files, you can declare this dependency in the `globalDependencies`
+array.
+
+```jsonc
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "globalDependencies": [".env"],
+  "pipeline": {
+    // ...other tasks
+    "test": {
+      "outputs": [], // leave empty to only cache logs
+      "dependsOn": ["build"],
+    }
+  }
+}
+```
+
+## Altering Caching Based on Environment Variables
+
 When you use `turbo` with tools that inline environment variables at build time (e.g. [Next.js](https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser) or [Create React App](https://create-react-app.dev/docs/adding-custom-environment-variables/)), it is important to tell `turbo` about it. Otherwise, you could ship a cached artifact with the wrong environment variables!
 
-Luckily, you can control `turbo`'s cache fingerprinting (also known as "hashing") behavior based on the values of both environment variables and the contents of files:
+Luckily, you can control `turbo`'s cache fingerprinting (also known as "hashing") behavior based on the values of environment variables.
 
-- Including environment variables in a `dependsOn` in your `pipeline` definition prefixed by a `$` will impact the cache fingerprint on a per-task or per-workspace-task basis.
+- Including environment variables in the `env` key in your `pipeline` definition will impact the cache fingerprint on a per-task or per-workspace-task basis.
 - Including environment variables in `globalDependencies` list prefixed by a `$` will impact the cache fingerprint of _all_ tasks.
-- Including files or globs of files in `globalDependencies` will impact the cache fingerprint of _all_ tasks.
 - The value of any environment variable that includes `THASH` in its name will impact the cache fingerprint of _all_ tasks.
 
 ```jsonc
@@ -169,35 +189,33 @@ Luckily, you can control `turbo`'s cache fingerprinting (also known as "hashing"
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build",
-        // env vars will impact hashes of all "build" tasks
-        "$SOME_ENV_VAR",
-      ],
+      "dependsOn": ["^build"],
+      // env vars will impact hashes of all "build" tasks
+      "env": ["SOME_ENV_VAR"],
       "outputs": ["dist/**"]
     },
 
     // override settings for the "build" task for the "web" app
     "web#build": {
-      "dependsOn": [
-        "^build",
+      "dependsOn": ["^build"],
+      "env": [
         // env vars that will impact the hash of "build" task for only "web" app
-        "$STRIPE_SECRET_KEY",
-        "$NEXT_PUBLIC_STRIPE_PUBLIC_KEY",
-        "$NEXT_PUBLIC_ANALYTICS_ID",
+        "STRIPE_SECRET_KEY",
+        "NEXT_PUBLIC_STRIPE_PUBLIC_KEY",
+        "NEXT_PUBLIC_ANALYTICS_ID",
       ],
       "outputs": [".next/**"],
     },
 
     // override settings for the "build" task for the "docs" app
     "docs#build": {
-      "dependsOn": [
-        "^build",
+      "dependsOn": ["^build"],
+      "env": [
         // env vars that will impact the hash of "build" task for only "docs" app
-        "$STRIPE_SECRET_KEY",
-        "$NEXT_PUBLIC_STRIPE_PUBLIC_KEY",
-        "$NEXT_PUBLIC_ANALYTICS_ID",
-      ],
+        "STRIPE_SECRET_KEY",
+        "NEXT_PUBLIC_STRIPE_PUBLIC_KEY",
+        "NEXT_PUBLIC_ANALYTICS_ID",
+      ]
       "outputs": [".next/**"],
     }
   },
@@ -210,6 +228,10 @@ Luckily, you can control `turbo`'s cache fingerprinting (also known as "hashing"
 ```
 
 <Callout type="info">
+  Declaring environment variables in the `dependsOn` config with a `$` prefix is deprecated.
+</Callout>
+
+<Callout type="idea">
   Pro Tip: It is more common for monorepos to use environment variables in workspaces that contain applications (such as a website) rather than shared packages (such as a UI component library). Thus, to get higher cache hit rates, you should likely only "depend on" environment variables in package-specific tasks in your `turbo.json` configuration.
 </Callout>
 
@@ -221,9 +243,9 @@ To help ensure correct caching across environments Turborepo 1.4+ will automatic
 {
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build"
--       "$NEXT_PUBLIC_EXAMPLE_ENV_VAR"
+      "dependsOn": ["^build"],
+      "env": [
+-       "NEXT_PUBLIC_EXAMPLE_ENV_VAR"
       ]
     }
   }

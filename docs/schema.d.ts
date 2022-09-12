@@ -47,7 +47,7 @@ export interface Schema {
 
 export interface Pipeline {
   /**
-   * The list of tasks and environment variables that this task depends on.
+   * The list of tasks that this task depends on.
    *
    * Prefixing an item in dependsOn with a ^ tells turbo that this pipeline task depends
    * on the package's topological dependencies completing the task with the ^ prefix first
@@ -58,12 +58,17 @@ export interface Pipeline {
    * package level (e.g. "a package's test and lint commands depend on build being
    * completed first").
    *
-   * Prefixing an item in dependsOn with a $ tells turbo that this pipeline task depends
-   * the value of that environment variable.
-   *
    * @default []
    */
   dependsOn?: string[];
+
+  /**
+   * The list of environment variables this task depends on. Strings in this array
+   * should not be prefixed with a "$" character.
+   *
+   * @default []
+   */
+  env?: string[];
 
   /**
    * The set of glob patterns of a task's cacheable filesystem outputs.
