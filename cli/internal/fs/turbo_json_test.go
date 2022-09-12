@@ -134,6 +134,35 @@ func Test_ReadTurboConfig_BothCorrectAndLegacy(t *testing.T) {
 	assert.Equal(t, rootPackageJSON.LegacyTurboConfig == nil, true)
 }
 
+func Test_ReadTurboConfig_EnvDeclarations(t *testing.T) {
+	testDir := getTestDir(t, "legacy-env")
+
+	packageJSONPath := testDir.Join("package.json")
+	rootPackageJSON, pkgJSONReadErr := ReadPackageJSON(packageJSONPath)
+
+	if pkgJSONReadErr != nil {
+		t.Fatalf("invalid parse: %#v", pkgJSONReadErr)
+	}
+
+	turboJSON, turboJSONReadErr := ReadTurboConfig(testDir, rootPackageJSON)
+
+	if turboJSONReadErr != nil {
+		t.Fatalf("invalid parse: %#v", turboJSONReadErr)
+	}
+
+	pipeline := turboJSON.Pipeline
+	// Only legacy declaration
+	assert.EqualValues(t, pipeline["task1"].EnvVarDependencies, []string{"TASK_1_VAR_A"})
+	// Only new declaration
+	assert.EqualValues(t, pipeline["task2"].EnvVarDependencies, []string{"TASK_2_VAR_B"})
+	// Same var declared in both
+	assert.EqualValues(t, pipeline["task3"].EnvVarDependencies, []string{"TASK_3_VAR_C"})
+	// Different vars declared in both
+	assert.EqualValues(t, pipeline["task4"].EnvVarDependencies, []string{"TASK_4_VAR_D", "TASK_4_VAR_E"})
+	// Dollar sign in new key
+	assert.EqualValues(t, pipeline["task5"].EnvVarDependencies, []string{})
+}
+
 // Helpers
 func validateOutput(t *testing.T, actual Pipeline, expected map[string]TaskDefinition) {
 	// check top level keys

@@ -1,0 +1,31 @@
+// mocked test comment
+{
+  "pipeline": {
+    // Only legacy declaration
+    "task1": {
+      "dependsOn": ["$TASK_1_VAR_A"]
+    },
+    // Only new declaration
+    "task2": {
+      "env": ["TASK_2_VAR_B"]
+    },
+    // Same var declared in both
+    "task3": {
+      "dependsOn": ["$TASK_3_VAR_C"],
+      "env": ["TASK_3_VAR_C"]
+    },
+    // Different vars declared in both
+    "task4": {
+      "dependsOn": ["$TASK_4_VAR_D"],
+      "env": ["TASK_4_VAR_E"]
+    },
+    // Dollar sign in new key
+    "task5": {
+      "env": ["$TASK_5_VAR_A"]
+    }
+  },
+  "remoteCache": {
+    "teamId": "team_id",
+    "signature": true
+  }
+}

@@ -43,6 +43,7 @@ type pipelineJSON struct {
 	DependsOn  []string            `json:"dependsOn,omitempty"`
 	Inputs     []string            `json:"inputs,omitempty"`
 	OutputMode util.TaskOutputMode `json:"outputMode,omitempty"`
+	Env        []string            `json:"env,omitempty"`
 }
 
 // Pipeline is a struct for deserializing .pipeline in configFile
@@ -162,18 +163,33 @@ func (c *TaskDefinition) UnmarshalJSON(data []byte) error {
 	} else {
 		c.ShouldCache = *rawPipeline.Cache
 	}
-	c.EnvVarDependencies = []string{}
+
+	envVarDependencies := make(util.Set)
 	c.TopologicalDependencies = []string{}
 	c.TaskDependencies = []string{}
+
 	for _, dependency := range rawPipeline.DependsOn {
 		if strings.HasPrefix(dependency, envPipelineDelimiter) {
-			c.EnvVarDependencies = append(c.EnvVarDependencies, strings.TrimPrefix(dependency, envPipelineDelimiter))
+			// TODO: Log a deprecation here.
+			envVarDependencies.Add(strings.TrimPrefix(dependency, envPipelineDelimiter))
 		} else if strings.HasPrefix(dependency, topologicalPipelineDelimiter) {
 			c.TopologicalDependencies = append(c.TopologicalDependencies, strings.TrimPrefix(dependency, topologicalPipelineDelimiter))
 		} else {
 			c.TaskDependencies = append(c.TaskDependencies, dependency)
 		}
 	}
+
+	// Append env key into EnvVarDependencies
+	for _, value := range rawPipeline.Env {
+		if strings.HasPrefix(value, envPipelineDelimiter) {
+			// TODO: Throw a hard error here or log a warning, but still use the var?
+		} else {
+			envVarDependencies.Add(value)
+		}
+	}
+
+	c.EnvVarDependencies = envVarDependencies.UnsafeListOfStrings()
+
 	c.Inputs = rawPipeline.Inputs
 	c.OutputMode = rawPipeline.OutputMode
 	return nil
