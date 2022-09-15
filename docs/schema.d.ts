@@ -6,21 +6,29 @@ export interface Schema {
 
   /**
    * A list of globs and environment variables for implicit global hash dependencies.
-   * Environment variables should be prefixed with $ (e.g. $GITHUB_TOKEN).
    *
    * Any other entry without this prefix, will be considered filesystem glob. The
    * contents of these files will be included in the global hashing algorithm and affect
    * the hashes of all tasks.
    *
-   * This is useful for busting the cache based on .env files (not in Git), environment
-   * variables, or any root level file that impacts package tasks (but are not represented
-   * in the traditional dependency graph
+   * This is useful for busting the cache based on .env files (not in Git), or any root level
+   * file that impacts package tasks (but are not represented in the traditional dependency graph.
    *
    * (e.g. a root tsconfig.json, jest.config.js, .eslintrc, etc.)).
    *
    * @default []
    */
   globalDependencies?: string[];
+
+  /**
+   * a list of environment variables that will be included in the hashes of all tasks.
+   * If the value of these environment variables changes, it will invalidate the cache.
+   *
+   * Do not include a $ prefix in these values.
+   *
+   * @default []
+   */
+  globalEnv?: string[];
 
   /**
    * An object representing the task dependency graph of your project. turbo interprets

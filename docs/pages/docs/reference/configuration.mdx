@@ -28,8 +28,8 @@ This is useful for busting the cache based on `.env` files (not in Git), environ
   "globalDependencies": [
     ".env", // contents will impact hashes of all tasks
     "tsconfig.json", // contents will impact hashes of all tasks
-    "$GITHUB_TOKEN"// value will impact the hashes of all tasks
-  ]
+  ],
+  "globalEnv": ["GITHUB_TOKEN"] // value will impact the hashes of all tasks
 }
 ```
 
@@ -126,8 +126,8 @@ The list of environment variables a task depends on.
       "outputs": [".next/**"]
     }
   },
-  "globalDependencies": [
-    "$GITHUB_TOKEN"// value will impact the hashes of all tasks
+  "globalEnv": [
+    "GITHUB_TOKEN"// value will impact the hashes of all tasks
   ]
 }
 ```
