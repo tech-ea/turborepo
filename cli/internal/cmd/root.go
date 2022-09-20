@@ -5,6 +5,7 @@ import (
 	"os"
 	"runtime/pprof"
 	"runtime/trace"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -126,6 +127,7 @@ func getCmd(helper *cmdutil.Helper, signalWatcher *signals.Watcher) *cobra.Comma
 				if err != nil {
 					return err
 				}
+				helper.ProfileDeadline = time.Now().Add(30 * time.Second)
 				helper.RegisterCleanup(cleanup)
 			}
 			return nil

@@ -111,9 +111,18 @@ func GetCmd(helper *cmdutil.Helper, signalWatcher *signals.Watcher) *cobra.Comma
 			opts.runOpts.passThroughArgs = passThroughArgs
 			run := configureRun(base, opts, signalWatcher)
 			ctx := cmd.Context()
-			if err := run.run(ctx, tasks); err != nil {
-				base.LogError("run failed: %v", err)
-				return err
+			if !helper.ProfileDeadline.IsZero() {
+				for time.Now().Before(helper.ProfileDeadline) {
+					if err := run.run(ctx, tasks); err != nil {
+						base.LogError("run failed: %v", err)
+						return err
+					}
+				}
+			} else {
+				if err := run.run(ctx, tasks); err != nil {
+					base.LogError("run failed: %v", err)
+					return err
+				}
 			}
 			return nil
 		},

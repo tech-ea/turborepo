@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/fatih/color"
 	"github.com/hashicorp/go-hclog"
@@ -49,6 +50,8 @@ type Helper struct {
 
 	cleanupsMu sync.Mutex
 	cleanups   []io.Closer
+
+	ProfileDeadline time.Time
 }
 
 // RegisterCleanup saves a function to be run after turbo execution,
