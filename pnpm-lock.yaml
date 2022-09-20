@@ -60,7 +60,7 @@ importers:
       '@react-aria/ssr': 3.3.0
       '@types/node': ^16.11.12
       '@types/react': 17.0.50
-      autoprefixer: 10.4.8
+      autoprefixer: 10.4.11
       axios: 0.27.2
       classnames: 2.3.2
       copy-to-clipboard: 3.3.2
@@ -100,7 +100,7 @@ importers:
       '@babel/core': 7.19.1
       '@types/node': 16.11.44
       '@types/react': 17.0.50
-      autoprefixer: 10.4.8_postcss@8.4.16
+      autoprefixer: 10.4.11_postcss@8.4.16
       csstype: 3.1.1
       eslint: 8.10.0
       eslint-config-next: 12.3.0_rhdx7f2dzz7ntfaxdbnxqxpzfu
@@ -2026,15 +2026,15 @@ packages:
     hasBin: true
     dev: true
 
-  /autoprefixer/10.4.8_postcss@8.4.16:
-    resolution: {integrity: sha512-75Jr6Q/XpTqEf6D2ltS5uMewJIx5irCU1oBYJrWjFenq/m12WRRrz6g15L1EIoYvPLXTbEry7rDOwrcYNj77xw==}
+  /autoprefixer/10.4.11_postcss@8.4.16:
+    resolution: {integrity: sha512-5lHp6DgRodxlBLSkzHOTcufWFflH1ewfy2hvFQyjrblBFlP/0Yh4O/Wrg4ow8WRlN3AAUFFLAQwX8hTptzqVHg==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.3
-      caniuse-lite: 1.0.30001385
+      caniuse-lite: 1.0.30001407
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -2209,7 +2209,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001385
+      caniuse-lite: 1.0.30001407
       electron-to-chromium: 1.4.235
       node-releases: 2.0.6
       update-browserslist-db: 1.0.5_browserslist@4.21.3
@@ -2315,6 +2315,10 @@ packages:
 
   /caniuse-lite/1.0.30001385:
     resolution: {integrity: sha512-MpiCqJGhBkHgpyimE9GWmZTnyHyEEM35u115bD3QBrXpjvL/JgcP8cUhKJshfmg4OtEHFenifcK5sZayEw5tvQ==}
+    dev: false
+
+  /caniuse-lite/1.0.30001407:
+    resolution: {integrity: sha512-4ydV+t4P7X3zH83fQWNDX/mQEzYomossfpViCOx9zHBSMV+rIe3LFqglHHtVyvNl1FhTNxPxs3jei82iqOW04w==}
 
   /ccount/2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
